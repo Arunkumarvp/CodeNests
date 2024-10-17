@@ -1,0 +1,88 @@
+﻿@model CodeNest.DTO.Models.CompositeViewModel  
+@inject IHttpContextAccessor _httpContextAccessor
+@{
+    string? workSpace = _httpContextAccessor.HttpContext.Session.GetString("workspaceId");
+}
+
+@if (Model.FormatterView.Type == "Json")
+{
+    @await Html.PartialAsync("_JsonView",Model.FormatterView)
+}
+
+    @await Html.PartialAsync("_WorkSpaceCard")
+
+
+
+
+@section Scripts {
+    <script>
+        // Function to check if workspaceId exists and handle saving
+        function checkWorkspaceAndSave() {
+            const workspaceId = '@workSpace';
+
+            if (workspaceId === '' || workspaceId === null) {
+                // Open the modal to enter Workspace Name and Description
+                var modal = new bootstrap.Modal(document.getElementById('workspaceModal'), {});
+                modal.show();
+            } else {
+                // If workspaceId exists, submit the form to SaveJson action
+                var form = document.getElementById('jsonForm');
+                form.action = "/Formatter/SaveJson"; // Set action URL dynamically
+                form.submit();
+            }
+        }
+
+        // Function to submit the form after filling Workspace details in the modal
+        function submitForm() {
+            const workspaceName = document.getElementById('workspaceName').value;
+            const workspaceDescription = document.getElementById('workspaceDescription')?.value;
+
+            if (workspaceName && workspaceDescription) {
+                // Append hidden fields to the form to include workspace details
+                const form = document.getElementById('jsonForm');
+
+                const nameInput = document.createElement('input');
+                nameInput.type = 'hidden';
+                nameInput.name = 'Name';
+                nameInput.value = workspaceName;
+
+                const descriptionInput = document.createElement('input');
+                descriptionInput.type = 'hidden';
+                descriptionInput.name = 'Description';
+                descriptionInput.value = workspaceDescription;
+
+                form.appendChild(nameInput);
+                form.appendChild(descriptionInput);
+
+                // Set action URL to SaveJson and submit the form
+                form.action = "/Formatter/SaveJson";
+                form.submit();
+            } else {
+                alert('Please fill out both the Name and Description fields.');
+            }
+        }
+
+        // Function to minify the JSON input
+        function minifyJson() {
+            const inputJson = document.getElementById('inputJson').value;
+            try {
+                const minifiedJson = JSON.stringify(JSON.parse(inputJson));
+                document.getElementById('inputJson').value = minifiedJson;
+            } catch (e) {
+                alert('Invalid JSON');
+            }
+        }
+
+        // Function to clear both input and formatted JSON text areas
+        function clearJson() {
+            document.getElementById('inputJson').value = '';
+            document.getElementById('formattedJson').value = '';
+        }
+    document.addEventListener('DOMContentLoaded', function () {
+        var myModal = new bootstrap.Modal(document.getElementById('modalCenter'), {
+            keyboard: false
+        });
+        myModal.show();
+    });
+</script>
+}

@@ -44,13 +44,14 @@ namespace CodeNest.DAL.Repository
 
             try
             {
-                List<Workspaces> workspaces = await _mongoDbService.WorkSpaces
+                List<Workspaces> latestWorkspace = await _mongoDbService.WorkSpaces
                     .AsQueryable()
                     .Where(w => w.CreatedBy == userId)
+                    .OrderByDescending(w => w.CreatedOn)
                     .ToListAsync();
 
                 _logger.LogInformation("GetWorkspaces: Successfully retrieved workspaces.");
-                return _mapper.Map<List<WorkspacesDto>>(workspaces);
+                return _mapper.Map<List<WorkspacesDto>>(latestWorkspace);
             }
             catch (Exception ex)
             {

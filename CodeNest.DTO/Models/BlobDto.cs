@@ -28,7 +28,7 @@ namespace CodeNest.DTO.Models
         public string? Name { get; set; }
         public string? Input { get; set; }
         public string? Output { get; set; }
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
         public ObjectId? Workspaces { get; set; }

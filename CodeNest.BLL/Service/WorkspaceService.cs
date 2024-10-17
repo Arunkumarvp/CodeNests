@@ -22,12 +22,14 @@ namespace CodeNest.BLL.Service
     public class WorkspaceService : IWorkspaceService
     {
         private readonly IWorkSpaceRepository _workSpaceRepository;
+        private readonly IJsonRepository _jsonRepository;
         private readonly ILogger<WorkspaceService> _logger;
 
-        public WorkspaceService(IWorkSpaceRepository workSpaceRepository, ILogger<WorkspaceService> logger)
+        public WorkspaceService(IWorkSpaceRepository workSpaceRepository, ILogger<WorkspaceService> logger, IJsonRepository jsonRepository)
         {
             _workSpaceRepository = workSpaceRepository;
             _logger = logger;
+            _jsonRepository= jsonRepository;
         }
 
         /// <summary>
@@ -77,6 +79,21 @@ namespace CodeNest.BLL.Service
             catch (Exception ex)
             {
                 _logger.LogError(ex, "CreateWorkspace: An error occurred while creating workspace.");
+                throw;
+            }
+        }
+
+        public async Task<BlobDto> GetJsonDataUser(ObjectId userID,ObjectId WorksSpaceId)
+        {
+            try
+            {
+               BlobDto blobDto = await _jsonRepository.GetExistingBlobData(userID,WorksSpaceId);
+                return blobDto;
+
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }

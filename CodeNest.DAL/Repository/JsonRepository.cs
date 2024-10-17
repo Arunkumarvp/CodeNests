@@ -98,5 +98,35 @@ namespace CodeNest.DAL.Repository
                 return false;
             }
         }
+
+        public async Task<BlobDto> GetExistingBlobData(ObjectId WorkSpacesId, ObjectId user)
+        {
+            _logger.LogInformation("GetExistingBlobData: Retrieving latest workspace data for user.");
+            _logger.LogDebug("GetExistingBlobData: Parameters - user: {User}, WorkSpacesId: {WorkSpacesId}", user, WorkSpacesId);
+
+            try
+            {
+                BlobData userWorkspace = await _mongoDbService.BlobDatas
+                    .Find(x => x.CreatedBy == user && x.Workspaces == WorkSpacesId)
+                    .SortByDescending(x => x.CreatedOn)
+                    .FirstOrDefaultAsync();
+
+                if (userWorkspace == null)
+                {
+                    _logger.LogWarning("GetExistingBlobData: No data found for user: {User} in workspace: {WorkSpacesId}", user, WorkSpacesId);
+                }
+                else
+                {
+                    _logger.LogInformation("GetExistingBlobData: Data found for user: {User} in workspace: {WorkSpacesId}", user, WorkSpacesId);
+                }
+
+                return _mapper.Map<BlobDto>(userWorkspace);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetExistingBlobData: An error occurred while retrieving the latest workspace data.");
+                throw;
+            }
+        }
     }
 }

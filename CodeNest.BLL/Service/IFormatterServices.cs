@@ -18,5 +18,7 @@ namespace CodeNest.BLL.Service
     {
         Task<ValidationDto> JsonValidate(BlobDto jsonDto);
         Task<ValidationDto> Save(BlobDto jsonDto, ObjectId workSpace, ObjectId user);
+        Task<BlobDto> GetJsonDataLegacyUser(ObjectId workSpace, ObjectId user);
+       
     }
 }

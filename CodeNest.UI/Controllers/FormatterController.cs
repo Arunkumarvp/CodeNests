@@ -14,6 +14,7 @@ using CodeNest.DAL.Models;
 using CodeNest.DTO.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using MongoDB.Driver;
 namespace CodeNest.UI.Controllers
 {
     public class FormatterController : Controller
@@ -29,15 +30,39 @@ namespace CodeNest.UI.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<IActionResult> JsonFormatter()
+        public async Task<IActionResult> Formatter() 
         {
-            // Simulate an asynchronous operation to avoid CS1998 warning
-            await Task.CompletedTask;
-            return View();
-        }
+            string? userId = HttpContext.Session.GetString("userId");
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            WorkspacesDto workSpacesNew = new();
+            List<WorkspacesDto> workspaces = await _workspaceService.GetWorkspaces(new ObjectId(userId));
+            WorkspacesDto latestWorkspace = workspaces.OrderByDescending(w => w.CreatedOn).FirstOrDefault();
+
+            BlobDto blobdata = await _formatterServices.GetJsonDataLegacyUser(latestWorkspace.Id, new ObjectId(userId));
+
+            FormatterViewDto? result = new()
+            {
+                Input = blobdata?.Input,
+                Output = blobdata?.Output,
+                Type= blobdata?.Type,
+            };
+            CompositeViewModel compositeViewModel = new()
+            {
+                FormatterView = result,
+                Workspaces = workSpacesNew,
+                WorkspacesList= workspaces
+
+            };
+            return View(compositeViewModel);
+        } 
 
         [HttpPost]
-        public async Task<IActionResult> JsonFormatter(BlobDto? jsonDto)
+        public async Task<IActionResult>Formatter(BlobDto? jsonDto)
         {
             if (jsonDto == null)
             {
@@ -85,10 +110,10 @@ namespace CodeNest.UI.Controllers
             if (jsonResult.IsValid)
             {
                 TempData["Success"] = jsonResult.Message;
-                return RedirectToAction("JsonFormatter", "Formatter");
+               return RedirectToAction("Formatter", "Formatter");
             }
 
-            return View("JsonFormatter");
+            return View("Formatter");
         }
     }
 }

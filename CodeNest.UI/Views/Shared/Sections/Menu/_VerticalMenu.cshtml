@@ -1,39 +1,36 @@
-@model CodeNest.DTO.Models.BlobDto;
 @{
-  TempData.Keep();
-  string? currentPage = ViewContext.HttpContext.Request.Path;
+    TempData.Keep();
+    string? currentPage = ViewContext.HttpContext.Request.Path;
 }
 
 <!-- Menu -->
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
 
-  <div
-    class='app-brand demo @((@ViewData["navbarFull"] != null && Convert.ToBoolean(@ViewData["navbarFull"])) ? "d-xl-none" : "")'>
-    <a asp-controller="Dashboards" asp-action="Index" class="app-brand-link">
-      <span class="app-brand-logo demo">
-      </span>
+    <div class='app-brand demo @((@ViewData["navbarFull"] != null && Convert.ToBoolean(@ViewData["navbarFull"])) ? "d-xl-none" : "")'>
+        <a asp-controller="Dashboards" asp-action="Index" class="app-brand-link">
+            <span class="app-brand-logo demo">
+            </span>
 
-      <span class="app-brand-text demo menu-text fw-bold ms-2">@TempData.Peek("appName")</span>
-    </a>
+            <span class="app-brand-text demo menu-text fw-bold ms-2">@TempData.Peek("appName")</span>
+        </a>
 
-    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-      <i class="bx bx-chevron-left bx-sm d-flex align-items-center justify-content-center"></i>
-    </a>
-  </div>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+            <i class="bx bx-chevron-left bx-sm d-flex align-items-center justify-content-center"></i>
+        </a>
+    </div>
 
-  <div class="menu-inner-shadow"></div>
+    <div class="menu-inner-shadow"></div>
 
-  <ul class="menu-inner py-1">
-    <!-- Pages -->
-    <li class='menu-item@(currentPage == "/Formatter/JsonFormatter" ? " active open" : "")'>
-      <a asp-controller="Formatter" asp-action="JsonFormatter" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-dock-top"></i>
-        <div>JSON</div>
-      </a>
-      <ul class="menu-sub">
-        <!-- Dynamically load JsonViewComponent here -->
-        @await Component.InvokeAsync("Json")
-      </ul>
-    </li>
-  </ul>
+    <ul class="menu-inner py-1">
+        <!-- Pages -->
+        <li class='menu-item@(currentPage == "/Formatter/Formatter" ? " active open" : "")'>
+            <a asp-controller="Formatter" asp-action="JsonFormatter" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div>JSON</div>
+            </a>
+            <ul class="menu-sub">
+                <!-- Dynamically load JsonViewComponent here -->
+            </ul>
+        </li>
+    </ul>
 </aside>

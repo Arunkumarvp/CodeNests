@@ -9,15 +9,17 @@
 //
 // ***********************************************************************************************
 
-using CodeNest.DTO.Models;
-using MongoDB.Bson;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CodeNest.DAL.Repository
+namespace CodeNest.DTO.CommonDto
 {
-    public interface IJsonRepository
+    public enum FormatterEnum
     {
-        Task<bool> SaveAsync(BlobDto jsonData, ObjectId workSpace, ObjectId user);
-        Task<List<BlobDto>> GetJsonList(ObjectId workspaceId);
-        Task<BlobDto> GetExistingBlobData(ObjectId user, ObjectId WorkSpacesId);
+        Json = 1,
+        Xml = 2
     }
 }

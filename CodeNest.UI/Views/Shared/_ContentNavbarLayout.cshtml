@@ -1,3 +1,4 @@
+@model CodeNest.DTO.Models.CompositeViewModel
 @await Html.PartialAsync("Sections/_Variables")
 @{
   TempData.Keep();
@@ -6,7 +7,6 @@
   ViewData["contentNavbar"] = true;
 
   @* Display elements *@
-  ViewData["isNavbar"] = (ViewData["isNavbar"] ??= true);
   ViewData["isMenu"] = (ViewData["isMenu"] ??= true);
   ViewData["isFlex"] = (ViewData["isFlex"] ??= false);
   @* ViewData["customizerHidden"] = (ViewData["customizerHidden"] ??= "customizer-hide"); *@
@@ -33,7 +33,36 @@
 @{
   bool isMenu = ViewData["isMenu"] != null && Convert.ToBoolean(ViewData["isMenu"]);
 }
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false"> WorkSpace </a>
+                    <ul class="dropdown-menu dropdown-menu-sm scrollable-menu" aria-labelledby="navbarDropdown1">
+                        @foreach (var item in Model.WorkspacesList)
+                        {
+                            <li><a class="dropdown-item" href="#">@item.Name</a></li>
+                        }
+                    </ul>
+                </li>
 
+
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Dropdown 2 </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                        <li><a class="dropdown-item" href="#">Action 1</a></li>
+                        <li><a class="dropdown-item" href="#">Action 2</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 <div class='layout-wrapper layout-content-navbar @(isMenu ? "" : "layout-without-menu")'>
   <div class='layout-container'>
 
@@ -41,17 +70,8 @@
     {
       @await Html.PartialAsync("Sections/Menu/_VerticalMenu")
     }
-
     <!-- Layout page -->
     <div class="layout-page">
-      <!-- Navbar -->
-      @if (@ViewData["isNavbar"] != null && Convert.ToBoolean(@ViewData["isNavbar"]))
-      {
-        @await Html.PartialAsync("Sections/Navbar/_Navbar")
-      }
-      <!-- / Navbar -->
-
-
       <!-- Content wrapper -->
       <div class="content-wrapper">
 
@@ -67,7 +87,6 @@
     </div>
     <!-- / Layout page -->
   </div>
-
   <!-- Overlay -->
   @if (@ViewData["isMenu"] != null && Convert.ToBoolean(@ViewData["isMenu"]))
   {

@@ -156,5 +156,37 @@ namespace CodeNest.BLL.Service
                 };
             }
         }
+
+        /// <summary>
+        /// Retrieves the JSON data for the specified workspace and user.
+        /// </summary>
+        /// <param name="workSpace">The workspace identifier.</param>
+        /// <param name="user">The user identifier.</param>
+        /// <returns>A BlobDto containing the retrieved JSON data.</returns>
+        public async Task<BlobDto>GetJsonDataLegacyUser(ObjectId workSpace, ObjectId user)
+        {
+            _logger.LogInformation("Get: Starting retrieval operation.");
+
+            try
+            {
+                BlobDto jsonData = await _jsonRepository.GetExistingBlobData(workSpace, user);
+
+                if (jsonData != null)
+                {
+                    _logger.LogInformation("Get: Successfully retrieved JSON data.");
+                    return jsonData;
+                }
+                else
+                {
+                    _logger.LogWarning("Get: No data found for the specified workspace and user.");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Get: An unexpected error occurred.");
+                throw;
+            }
+        }
     }
 }

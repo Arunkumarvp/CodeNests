@@ -9,15 +9,18 @@
 //
 // ***********************************************************************************************
 
-using CodeNest.DTO.Models;
-using MongoDB.Bson;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CodeNest.DAL.Repository
+namespace CodeNest.DTO.Models
 {
-    public interface IJsonRepository
+    public class CompositeViewModel
     {
-        Task<bool> SaveAsync(BlobDto jsonData, ObjectId workSpace, ObjectId user);
-        Task<List<BlobDto>> GetJsonList(ObjectId workspaceId);
-        Task<BlobDto> GetExistingBlobData(ObjectId user, ObjectId WorkSpacesId);
+        public FormatterViewDto? FormatterView { get; set; }
+        public WorkspacesDto? Workspaces { get; set; }
+        public List<WorkspacesDto> WorkspacesList { get; set; }
     }
 }
