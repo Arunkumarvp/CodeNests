@@ -1,4 +1,4 @@
-@model CodeNest.DTO.Models.UserWorkspaceFilesDto
+@model CodeNest.UI.Models.FormatterViewModel
 @inject IHttpContextAccessor _httpContextAccessor
 @await Html.PartialAsync("Sections/_Variables")
 @{
@@ -59,12 +59,12 @@
                                 <span>Create WorkSpace</span>
                             </a>
                         </li>
-                        @if (Model?.Workspaces.Count > 0)
+                        @if (Model?.UserWorkspaceFiles.Workspaces?.Count > 0)
                         {
-                            @foreach (var workspace in Model.Workspaces)
+                            @foreach (var workspace in Model.UserWorkspaceFiles.Workspaces)
                             {
                                 <li>
-                                    <a class="dropdown-item" asp-action="JsonFormatter" asp-controller="Formatter" asp-route-userId="@workspace.CreatedBy" asp-route-workSpaceId="@workspace.Id">
+                                    <a class="dropdown-item" asp-action="Formatter" asp-controller="Formatter" asp-route-userId="@workspace.CreatedBy" asp-route-workSpaceId="@workspace.Id">
                                         <i class="bx bx-user bx-md me-2"></i>
                                         <span>@workspace.Name</span>
                                     </a>
@@ -109,7 +109,7 @@
 
         @if (isMenu)
         {
-            @await Html.PartialAsync("~/Views/Formatter/_Vertical.cshtml", Model?.BlobsList)
+            @await Html.PartialAsync("~/Views/Formatter/_Vertical.cshtml", Model?.UserWorkspaceFiles.BlobsList)
         }
 
         <!-- Layout page -->

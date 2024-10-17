@@ -11,6 +11,7 @@
 
 using CodeNest.BLL.Service;
 using CodeNest.DTO.Models;
+using CodeNest.UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 namespace CodeNest.UI.Controllers
@@ -30,16 +31,14 @@ namespace CodeNest.UI.Controllers
             _jsonService = jsonService;
         }
 
-        public async Task<IActionResult> JsonFormatter(ObjectId userId, ObjectId? workSpaceId)
+        public async Task<IActionResult> Formatter(ObjectId userId, ObjectId? workSpaceId)
         {
-            List<WorkspacesDto> workspaces = await _workspaceService
-                .GetWorkspaces(userId);
-
+            List<WorkspacesDto> workspaces = await _workspaceService.GetWorkspaces(userId);
             ObjectId workspaceObjectId = workSpaceId == null || workSpaceId == ObjectId.Empty
-            ? workspaces[0].Id : workSpaceId.Value;
+                ? workspaces[0].Id : workSpaceId.Value;
 
             List<BlobDto> blobsList = await _jsonService.GetJson(workspaceObjectId);
-            //_httpContextAccessor.HttpContext.Session.SetString("workspaceId", workspaceObjectId.ToString());
+
             UserWorkspaceFilesDto userWorkspace = new()
             {
                 UserId = userId,
@@ -48,27 +47,30 @@ namespace CodeNest.UI.Controllers
                 BlobsList = blobsList
             };
 
-            return View(userWorkspace);
+            FormatterViewModel viewModel = new()
+            {
+                UserWorkspaceFiles = userWorkspace,
+                Blob = new BlobDto() // Initialize with an empty BlobDto or any default value
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> JsonFormatter(UserWorkspaceFilesDto userWorkspaceFiles)
+        public async Task<IActionResult> JsonFormatter([FromBody] BlobDto blobDto)
         {
-            if (userWorkspaceFiles.Blob == null)
+            if (blobDto == null)
             {
-                TempData["Error"] = "Invalid JSON data.";
-                return View(new BlobDto()); // Return an empty BlobDto
+                return Json(new { success = false, message = "Invalid JSON data." });
             }
 
-            ValidationDto result = await _formatterServices.JsonValidate(userWorkspaceFiles.Blob);
+            ValidationDto result = await _formatterServices.JsonValidate(blobDto);
             if (result.IsValid)
             {
-                TempData["Success"] = result.Message;
-                return View(result.Blobs); // Pass the validated BlobDto to the view
+                return Json(new { success = true, message = result.Message, output = result.Blobs.Output });
             }
 
-            TempData["Error"] = result.Message;
-            return View(result.Blobs); // Pass the original BlobDto to the view
+            return Json(new { success = false, message = result.Message });
         }
 
         [HttpPost]
@@ -102,10 +104,10 @@ namespace CodeNest.UI.Controllers
             if (jsonResult.IsValid)
             {
                 TempData["Success"] = jsonResult.Message;
-                return RedirectToAction("JsonFormatter", "Formatter");
+                return RedirectToAction("Formatter", "Formatter");
             }
 
-            return View("JsonFormatter");
+            return View("Formatter");
         }
     }
 }

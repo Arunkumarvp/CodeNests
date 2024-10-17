@@ -1,0 +1,97 @@
+﻿@model CodeNest.UI.Models.FormatterViewModel
+@inject IHttpContextAccessor _httpContextAccessor
+@using MongoDB.Bson
+@{
+   
+}
+@if (Model.UserWorkspaceFiles.WorkspaceId == null)
+{
+    <div class="col-lg-4 col-md-6">
+        <div class="mt-4">
+            <!-- Modal -->
+            <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalCenterTitle">WorkSpace</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form asp-action="Create" asp-controller="WorkSpace" method="post">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col mb-6">
+                                        <label  class="form-label">Name</label>
+                                        <input type="text" name="Name" class="form-control" placeholder="Enter the Name">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col mb-6">
+                                        <label  class="form-label">Description</label>
+                                        <input type="text" name="Description" class="form-control" placeholder="Enter the Description...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary" value="Save" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+}
+<div>
+    @await Html.PartialAsync("_JsonBeautifierPartial", Model) 
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var myModal = new bootstrap.Modal(document.getElementById('modalCenter'), {
+                keyboard: false
+            });
+            myModal.show();
+        });
+
+        function checkWorkspaceAndSave() {
+            const workspaceId = '@Model?.UserWorkspaceFiles.WorkspaceId';
+            if (!workspaceId) {
+                var modal = new bootstrap.Modal(document.getElementById('workspaceModal'), {});
+                modal.show();
+            } else {
+                var form = document.getElementById('jsonForm');
+                form.action = "/Formatter/SaveJson";
+                form.submit();
+            }
+        }
+
+        function submitForm() {
+            const workspaceName = document.getElementById('workspaceName').value;
+            const workspaceDescription = document.getElementById('workspaceDescription').value;
+
+            if (workspaceName && workspaceDescription) {
+                const form = document.getElementById('jsonForm');
+
+                const nameInput = document.createElement('input');
+                nameInput.type = 'hidden';
+                nameInput.name = 'Name';
+                nameInput.value = workspaceName;
+
+                const descriptionInput = document.createElement('input');
+                descriptionInput.type = 'hidden';
+                descriptionInput.name = 'Description';
+                descriptionInput.value = workspaceDescription;
+
+                form.appendChild(nameInput);
+                form.appendChild(descriptionInput);
+
+                form.action = "/Formatter/SaveJson";
+                form.submit();
+            } else {
+                alert('Please fill out both the Name and Description fields.');
+            }
+        }
+    </script>
+}
